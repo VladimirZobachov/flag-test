@@ -21,7 +21,7 @@ class OrderController extends Controller
             'payment_method_id' => 'required|exists:payment_methods,id',
         ]);
 
-        $user = Auth::user();
+        $user = $request->user();
         $cart = $user->cart;
 
         if (!$cart || $cart->items->isEmpty()) {

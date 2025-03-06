@@ -13,14 +13,10 @@ class CartController extends Controller
     /**
      * Получить корзину текущего пользователя.
      */
-    public function getCart()
+    public function getCart(Request $request)
     {
-        $user = Auth::user();
-        $cart = $user->cart()->with('items.product')->first();
-
-        if (!$cart) {
-            return response()->json(['message' => 'Корзина пуста'], 200);
-        }
+        $user = $request->user();
+        $cart = $user->cart()->with('items.product')->first() ?? Cart::create(['user_id' => $user->id]);
 
         return response()->json([
             'cart_id' => $cart->id,
@@ -33,7 +29,7 @@ class CartController extends Controller
                     'total' => $item->quantity * $item->product->price
                 ];
             }),
-            'total_price' => $cart->totalPrice(),
+            'total_price' => $cart->items->sum(fn ($item) => $item->quantity * $item->product->price),
         ]);
     }
 
@@ -97,16 +93,18 @@ class CartController extends Controller
     /**
      * Очистить корзину пользователя.
      */
-    public function clearCart()
+    public function clearCart(Request $request)
     {
-        $user = Auth::user();
+        $user = $request->user();
         $cart = $user->cart;
 
         if (!$cart) {
             return response()->json(['message' => 'Корзина уже пуста'], 200);
         }
 
+        // Удаляем корзину вместе с товарами
         $cart->items()->delete();
+        $cart->delete();
 
         return response()->json(['message' => 'Корзина очищена']);
     }
