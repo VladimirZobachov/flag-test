@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -51,7 +53,7 @@ class Product extends Model
         if ($this->stock >= $quantity) {
             $this->decrement('stock', $quantity);
         } else {
-            throw new \Exception('Недостаточно товара на складе');
+            throw new Exception('Недостаточно товара на складе');
         }
     }
 }
