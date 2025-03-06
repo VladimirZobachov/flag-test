@@ -5,10 +5,44 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 
+/**
+ * @OA\Tag(
+ *     name="Products",
+ *     description="Управление товарами"
+ * )
+ */
 class ProductController extends Controller
 {
     /**
-     * Получить список товаров с возможностью сортировки по цене.
+     * @OA\Get(
+     *     path="/api/products",
+     *     summary="Получить список товаров",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="sort_price",
+     *         in="query",
+     *         description="Сортировка по цене (asc - по возрастанию, desc - по убыванию)",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"asc", "desc"})
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Список товаров",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="current_page", type="integer", example=1),
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="Ноутбук Apple MacBook Pro"),
+     *                 @OA\Property(property="description", type="string", example="Мощный ноутбук с процессором M1"),
+     *                 @OA\Property(property="price", type="number", format="float", example=1999.99)
+     *             )),
+     *             @OA\Property(property="total", type="integer", example=50),
+     *             @OA\Property(property="per_page", type="integer", example=10),
+     *             @OA\Property(property="last_page", type="integer", example=5)
+     *         )
+     *     )
+     * )
      */
     public function index(Request $request)
     {
@@ -25,7 +59,29 @@ class ProductController extends Controller
     }
 
     /**
-     * Получить информацию о конкретном товаре по ID.
+     * @OA\Get(
+     *     path="/api/products/{id}",
+     *     summary="Получить информацию о конкретном товаре",
+     *     tags={"Products"},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="ID товара",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Информация о товаре",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Ноутбук Apple MacBook Pro"),
+     *             @OA\Property(property="description", type="string", example="Мощный ноутбук с процессором M1"),
+     *             @OA\Property(property="price", type="number", format="float", example=1999.99)
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Товар не найден")
+     * )
      */
     public function show($id)
     {

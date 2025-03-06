@@ -8,10 +8,37 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Product;
 
+/**
+ * @OA\Tag(
+ *     name="Cart",
+ *     description="Управление корзиной пользователя"
+ * )
+ */
 class CartController extends Controller
 {
     /**
-     * Получить корзину текущего пользователя.
+     * @OA\Get(
+     *     path="/api/cart",
+     *     summary="Получить корзину пользователя",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Успешный ответ",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="cart_id", type="integer", example=1),
+     *             @OA\Property(property="items", type="array", @OA\Items(
+     *                 @OA\Property(property="product_id", type="integer", example=10),
+     *                 @OA\Property(property="name", type="string", example="Ноутбук Apple MacBook Pro"),
+     *                 @OA\Property(property="quantity", type="integer", example=2),
+     *                 @OA\Property(property="price", type="number", format="float", example=1999.99),
+     *                 @OA\Property(property="total", type="number", format="float", example=3999.98)
+     *             )),
+     *             @OA\Property(property="total_price", type="number", format="float", example=3999.98)
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function getCart(Request $request)
     {
@@ -34,7 +61,23 @@ class CartController extends Controller
     }
 
     /**
-     * Добавить товар в корзину пользователя.
+     * @OA\Post(
+     *     path="/api/cart/add",
+     *     summary="Добавить товар в корзину",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"product_id", "quantity"},
+     *             @OA\Property(property="product_id", type="integer", example=10),
+     *             @OA\Property(property="quantity", type="integer", example=2)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Товар добавлен в корзину"),
+     *     @OA\Response(response=422, description="Ошибка валидации"),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function addToCart(Request $request)
     {
@@ -64,7 +107,22 @@ class CartController extends Controller
     }
 
     /**
-     * Удалить товар из корзины.
+     * @OA\Delete(
+     *     path="/api/cart/remove",
+     *     summary="Удалить товар из корзины",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"product_id"},
+     *             @OA\Property(property="product_id", type="integer", example=10)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Товар удален из корзины"),
+     *     @OA\Response(response=404, description="Товар не найден"),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function removeFromCart(Request $request)
     {
@@ -91,7 +149,14 @@ class CartController extends Controller
     }
 
     /**
-     * Очистить корзину пользователя.
+     * @OA\Delete(
+     *     path="/api/cart/clear",
+     *     summary="Очистить корзину пользователя",
+     *     tags={"Cart"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response=200, description="Корзина очищена"),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function clearCart(Request $request)
     {

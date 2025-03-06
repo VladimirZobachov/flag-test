@@ -6,10 +6,33 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ *
+ * @OA\Tag(
+ *     name="Auth",
+ *     description="Авторизация и регистрация пользователей"
+ * )
+ */
 class AuthController extends Controller
 {
     /**
-     * Регистрация пользователя.
+     * @OA\Post(
+     *     path="/api/register",
+     *     summary="Регистрация пользователя",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name","email","password","password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="Иван Иванов"),
+     *             @OA\Property(property="email", type="string", format="email", example="ivan@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Успешная регистрация"),
+     *     @OA\Response(response=422, description="Ошибка валидации")
+     * )
      */
     public function register(Request $request)
     {
@@ -34,7 +57,21 @@ class AuthController extends Controller
     }
 
     /**
-     * Авторизация пользователя (вход).
+     * @OA\Post(
+     *     path="/api/login",
+     *     summary="Авторизация пользователя",
+     *     tags={"Auth"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email","password"},
+     *             @OA\Property(property="email", type="string", format="email", example="ivan@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Успешный вход"),
+     *     @OA\Response(response=401, description="Неверные учетные данные")
+     * )
      */
     public function login(Request $request)
     {
@@ -59,7 +96,14 @@ class AuthController extends Controller
     }
 
     /**
-     * Выход пользователя (удаление токена).
+     * @OA\Post(
+     *     path="/api/logout",
+     *     summary="Выход пользователя",
+     *     tags={"Auth"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(response=200, description="Выход выполнен"),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function logout(Request $request)
     {
@@ -69,10 +113,27 @@ class AuthController extends Controller
     }
 
     /**
-     * Получение информации о текущем пользователе.
+     * @OA\Get(
+     *     path="/api/user",
+     *     summary="Получение информации о текущем пользователе",
+     *     tags={"Auth"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Данные пользователя",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="name", type="string", example="Иван Иванов"),
+     *             @OA\Property(property="email", type="string", format="email", example="ivan@example.com")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="Неавторизованный запрос")
+     * )
      */
     public function userProfile(Request $request)
     {
         return response()->json($request->user());
     }
 }
+
+

@@ -10,10 +10,31 @@ use App\Models\Order;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @OA\Tag(
+ *     name="Orders",
+ *     description="Управление заказами"
+ * )
+ */
 class OrderController extends Controller
 {
     /**
-     * Оформить заказ (оплатить корзину).
+     * @OA\Post(
+     *     path="/api/cart/checkout",
+     *     summary="Оформить заказ (оплатить корзину)",
+     *     tags={"Orders"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"payment_method_id"},
+     *             @OA\Property(property="payment_method_id", type="integer", example=1)
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Заказ успешно создан"),
+     *     @OA\Response(response=400, description="Корзина пуста"),
+     *     @OA\Response(response=500, description="Ошибка при создании заказа")
+     * )
      */
     public function checkout(Request $request)
     {
@@ -71,7 +92,22 @@ class OrderController extends Controller
     }
 
     /**
-     * Обновить статус заказа (Оплачен).
+     * @OA\Patch(
+     *     path="/api/orders/{orderId}/status",
+     *     summary="Обновить статус заказа (Оплачен)",
+     *     tags={"Orders"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="orderId",
+     *         in="path",
+     *         required=true,
+     *         description="ID заказа",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(response=200, description="Статус заказа обновлен"),
+     *     @OA\Response(response=400, description="Статус заказа нельзя изменить"),
+     *     @OA\Response(response=404, description="Заказ не найден")
+     * )
      */
     public function updateStatus(Request $request, $orderId)
     {
@@ -87,7 +123,19 @@ class OrderController extends Controller
     }
 
     /**
-     * Получить список заказов пользователя.
+     * @OA\Get(
+     *     path="/api/orders",
+     *     summary="Получить список заказов пользователя",
+     *     tags={"Orders"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Фильтрация по статусу заказа",
+     *         @OA\Schema(type="string", enum={"На оплату", "Оплачен", "Отменен"})
+     *     ),
+     *     @OA\Response(response=200, description="Список заказов")
+     * )
      */
     public function listOrders(Request $request)
     {
@@ -105,7 +153,21 @@ class OrderController extends Controller
     }
 
     /**
-     * Получить заказ по ID.
+     * @OA\Get(
+     *     path="/api/orders/{orderId}",
+     *     summary="Получить заказ по ID",
+     *     tags={"Orders"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="orderId",
+     *         in="path",
+     *         required=true,
+     *         description="ID заказа",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(response=200, description="Информация о заказе"),
+     *     @OA\Response(response=404, description="Заказ не найден")
+     * )
      */
     public function show($orderId)
     {
