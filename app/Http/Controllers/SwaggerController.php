@@ -8,7 +8,7 @@ namespace App\Http\Controllers;
  *     version="1.0",
  *     description="Эта документация описывает REST API для интернет-магазина",
  *     @OA\Contact(
- *         email="support@example.com"
+ *         email="zobachov@gmail.com"
  *     ),
  *     @OA\License(
  *         name="Apache 2.0",

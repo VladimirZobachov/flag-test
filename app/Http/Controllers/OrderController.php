@@ -92,7 +92,7 @@ class OrderController extends Controller
     }
 
     /**
-     * @OA\Patch(
+     * @OA\Put(
      *     path="/api/orders/{orderId}/status",
      *     summary="Обновить статус заказа (Оплачен)",
      *     tags={"Orders"},

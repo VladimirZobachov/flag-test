@@ -4,7 +4,7 @@
         "title": "API документация для e-commerce",
         "description": "Эта документация описывает REST API для интернет-магазина",
         "contact": {
-            "email": "support@example.com"
+            "email": "zobachov@gmail.com"
         },
         "license": {
             "name": "Apache 2.0",
@@ -412,12 +412,12 @@
             }
         },
         "/api/orders/{orderId}/status": {
-            "patch": {
+            "put": {
                 "tags": [
                     "Orders"
                 ],
                 "summary": "Обновить статус заказа (Оплачен)",
-                "operationId": "a8ee4b0b3958767efa744a601ce5e05c",
+                "operationId": "0af133d73a6406ffa46b4694e42f69d6",
                 "parameters": [
                     {
                         "name": "orderId",
